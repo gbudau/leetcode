@@ -5,14 +5,6 @@
 #include <string.h>
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
-bool    all_digits(int *A, int ASize)
-{
-    for (int i = 0; i < ASize; i++)
-        if (A[i] < 0 || A[i] > 9)
-            return false;
-    return true;
-}
-
 int     create_minutes(int a, int b)
 {
     int first = a * 10 + b;
@@ -68,8 +60,6 @@ char * largestTimeFromDigits(int* A, int ASize){
     char    *result = NULL;
     int     hours, minutes;
 
-    if (ASize != 4 || !all_digits(A, ASize))
-        return strdup("");
     if ((hours = get_hours(A, ASize, &minutes)) == -1)
         return strdup("");
     asprintf(&result, "%.2d:%.2d", hours, minutes);
