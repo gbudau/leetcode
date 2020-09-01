@@ -1,7 +1,6 @@
 #define _GNU_SOURCE
 #include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
@@ -33,9 +32,9 @@ int    get_minutes(int *A, int ASize, int idx1, int idx2)
     return create_minutes(minutes[0], minutes[1]);
 }
 
-int     get_hours(int *A, int ASize, int *minutes)
+int     get_hours(int *A, int ASize, int *max_minutes)
 {
-    int test, max_hour = -1;
+    int minutes, max_hour = -1;
 
     for (int i = 0; i < ASize; i++)
     {
@@ -43,12 +42,12 @@ int     get_hours(int *A, int ASize, int *minutes)
         {
             if (i != j)
             {
-                int number = A[i] * 10 + A[j];
-                if (number < 24 && number > max_hour &&
-                    (test = get_minutes(A, ASize, i, j)) != -1)
+                int hour = A[i] * 10 + A[j];
+                if (hour < 24 && hour > max_hour &&
+                    (minutes = get_minutes(A, ASize, i, j)) != -1)
                 {
-                    max_hour = number;
-                    *minutes = test;
+                    max_hour = hour;
+                    *max_minutes = minutes;
                 }
             }
         }
@@ -60,7 +59,7 @@ char * largestTimeFromDigits(int* A, int ASize){
     char    *result = NULL;
     int     hours, minutes;
 
-    if ((hours = get_hours(A, ASize, &minutes)) == -1)
+    if (ASize != 4 || (hours = get_hours(A, ASize, &minutes)) == -1)
         return strdup("");
     asprintf(&result, "%.2d:%.2d", hours, minutes);
     return result;
