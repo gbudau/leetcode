@@ -1,111 +1,96 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #define MAX_WORDS 31
-#define MAX_WORD_LEN 10
+#define MAX_WORD_LEN 12
 
-typedef struct	s_dict
+typedef struct	s_translation
 {
 	int		n;
 	char	word[MAX_WORD_LEN];
-}				t_dict;
+}				t_translation;
 
-
-
-void	init_value(t_dict *dict, int n, char *word)
+size_t	copy_string(char *dst, const char *src, size_t n)
 {
-	dict->n = n;
-	strncpy(dict->word, word, MAX_WORD_LEN);
-}
-
-void	init_dict(t_dict *eng_nrs)
-{
-	init_value(&eng_nrs[0], 1000000000, "Billion");
-	init_value(&eng_nrs[1], 1000000, "Million");
-	init_value(&eng_nrs[2], 1000, "Thousand");
-	init_value(&eng_nrs[3], 100, "Hundred");
-	init_value(&eng_nrs[4], 90, "Ninety");
-	init_value(&eng_nrs[5], 80, "Eighty");
-	init_value(&eng_nrs[6], 70, "Seventy");
-	init_value(&eng_nrs[7], 60, "Sixty");
-	init_value(&eng_nrs[8], 50, "Fifty");
-	init_value(&eng_nrs[9], 40, "Forty");
-	init_value(&eng_nrs[10], 30, "Thirty");
-	init_value(&eng_nrs[11], 20, "Twenty");
-	init_value(&eng_nrs[12], 19, "Nineteen");
-	init_value(&eng_nrs[13], 18, "Eighteen");
-	init_value(&eng_nrs[14], 17, "Seventeen");
-	init_value(&eng_nrs[15], 16, "Sixteen");
-	init_value(&eng_nrs[16], 15, "Fifteen");
-	init_value(&eng_nrs[17], 14, "Fourteen");
-	init_value(&eng_nrs[18], 13, "Thirteen");
-	init_value(&eng_nrs[19], 12, "Twelve");
-	init_value(&eng_nrs[20], 11, "Eleven");
-	init_value(&eng_nrs[21], 10, "Ten");
-	init_value(&eng_nrs[22], 9, "Nine");
-	init_value(&eng_nrs[23], 8, "Eight");
-	init_value(&eng_nrs[24], 7, "Seven");
-	init_value(&eng_nrs[25], 6, "Six");
-	init_value(&eng_nrs[26], 5, "Five");
-	init_value(&eng_nrs[27], 4, "Four");
-	init_value(&eng_nrs[28], 3, "Three");
-	init_value(&eng_nrs[29], 2, "Two");
-	init_value(&eng_nrs[30], 1, "One");
-}
-
-void	fill_hundreds(t_dict *eng_nrs, int num, char **ret)
-{
-	for (int i = 0; i < MAX_WORDS; i++)
+	size_t	i = 0;
+	while (src[i] && i < n - 1)
 	{
-		if (num >= eng_nrs[i].n)
-		{
-				char *tmp = *ret;
-				if (num >= 100)
-				{
-					int rest = num % eng_nrs[i].n;
-					num = num / eng_nrs[i].n;
-					fill_hundreds(eng_nrs, num, ret);
-					tmp = *ret;
-					tmp += sprintf(tmp, "%s ", eng_nrs[i].word);
-					num = rest;
-				}
-				else
-				{
-					num = num - eng_nrs[i].n;
-					tmp += sprintf(tmp, "%s ", eng_nrs[i].word);
-				}
-				*ret = tmp;
-		}
+		dst[i] = src[i];
+		i++;
 	}
+	dst[i] = '\0';
+	return (i);
 }
 
-void	fill_number_to_words(t_dict *eng_nrs, int num, char *ret)
+void	init_value(t_translation *t, int n, char *word)
 {
-	for (int i = 0; i < MAX_WORDS; i++)
+	t->n = n;
+	copy_string(t->word, word, MAX_WORD_LEN);
+}
+
+void	init_translation_array(t_translation *t)
+{
+	init_value(&t[0], 1000000000, "Billion ");
+	init_value(&t[1], 1000000, "Million ");
+	init_value(&t[2], 1000, "Thousand ");
+	init_value(&t[3], 100, "Hundred ");
+	init_value(&t[4], 90, "Ninety ");
+	init_value(&t[5], 80, "Eighty ");
+	init_value(&t[6], 70, "Seventy ");
+	init_value(&t[7], 60, "Sixty ");
+	init_value(&t[8], 50, "Fifty ");
+	init_value(&t[9], 40, "Forty ");
+	init_value(&t[10], 30, "Thirty ");
+	init_value(&t[11], 20, "Twenty ");
+	init_value(&t[12], 19, "Nineteen ");
+	init_value(&t[13], 18, "Eighteen ");
+	init_value(&t[14], 17, "Seventeen ");
+	init_value(&t[15], 16, "Sixteen ");
+	init_value(&t[16], 15, "Fifteen ");
+	init_value(&t[17], 14, "Fourteen ");
+	init_value(&t[18], 13, "Thirteen ");
+	init_value(&t[19], 12, "Twelve ");
+	init_value(&t[20], 11, "Eleven ");
+	init_value(&t[21], 10, "Ten ");
+	init_value(&t[22], 9, "Nine ");
+	init_value(&t[23], 8, "Eight ");
+	init_value(&t[24], 7, "Seven ");
+	init_value(&t[25], 6, "Six ");
+	init_value(&t[26], 5, "Five ");
+	init_value(&t[27], 4, "Four ");
+	init_value(&t[28], 3, "Three ");
+	init_value(&t[29], 2, "Two ");
+	init_value(&t[30], 1, "One ");
+}
+
+void	fill_number_to_words(t_translation *t, int num, char **str)
+{
+	for (int i = 0; num; i++)
 	{
-		if (num >= eng_nrs[i].n)
+		if (num >= t[i].n)
 		{
-			if (eng_nrs[i].n >= 100)
+			char *next = *str;
+			if (t[i].n >= 100)
 			{
-				int rest = num % eng_nrs[i].n;
-				num = num / eng_nrs[i].n;
-				fill_hundreds(eng_nrs, num, &ret);
-				ret += sprintf(ret, "%s ", eng_nrs[i].word);
+				int rest = num % t[i].n;
+				num = num / t[i].n;
+				fill_number_to_words(t, num, str);
+				next = *str;
+				next += copy_string(next , t[i].word, MAX_WORD_LEN);
 				num = rest;
 			}
 			else
 			{
-				fill_hundreds(eng_nrs, num, &ret);
-				break;
+				num = num - t[i].n;
+				next += copy_string(next , t[i].word, MAX_WORD_LEN);
 			}
+			*str = next;
 		}
 	}
-	*(ret - 1) = '\0';
 }
 
 char	*numberToWords(int num)
 {
-	t_dict eng_nrs[MAX_WORDS];
+	t_translation t[MAX_WORDS];
 
 	if (num < 0)
 		return (NULL);
@@ -114,7 +99,9 @@ char	*numberToWords(int num)
 	char *ret = malloc(128);
 	if (ret == NULL)
 		return (NULL);
-	init_dict(eng_nrs);
-	fill_number_to_words(eng_nrs, num, ret);
+	init_translation_array(t);
+	char *tmp = ret;
+	fill_number_to_words(t, num, &tmp);
+	*(tmp - 1) = '\0';
 	return (ret);
 }
